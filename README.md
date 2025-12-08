@@ -124,4 +124,5 @@ Works on all modern browsers (Chrome, Firefox, Safari, Edge)
 This project is created for educational purposes as part of a web engineering course submission.
 
 ### 🔗 **Live Demo**
-[Add your GitHub Pages or hosting link here if you deploy it]
+
+https://sanam-zainab.github.io/habitforge/
