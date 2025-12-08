@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitForge | Gamified Habit Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader">
+            <div class="flame"></div>
+            <p>Igniting HabitForge...</p>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-fire-flame-curved"></i>
+                <h1>Habit<span class="forge">Forge</span></h1>
+            </div>
+            <div class="header-stats">
+                <div class="stat-card">
+                    <span class="stat-label">Current Streak</span>
+                    <span class="stat-value" id="currentStreak">0</span>
+                    <span class="stat-unit">days</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Habits Active</span>
+                    <span class="stat-value" id="activeHabits">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Completion Rate</span>
+                    <span class="stat-value" id="completionRate">0%</span>
+                </div>
+            </div>
+            <button class="btn-new-habit" id="newHabitBtn">
+                <i class="fas fa-plus"></i> New Habit
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Panel: Streak & Motivation -->
+            <section class="left-panel">
+                <div class="streak-display">
+                    <h2><i class="fas fa-fire"></i> Streak Flame</h2>
+                    <div class="flame-container">
+                        <div class="flame-base" id="streakFlame">
+                            <div class="flame-inner"></div>
+                            <div class="flame-middle"></div>
+                            <div class="flame-outer"></div>
+                        </div>
+                        <div class="streak-days" id="streakDays">0</div>
+                    </div>
+                    <p class="streak-motivation" id="streakMessage">Start your journey! Complete a habit to ignite your flame!</p>
+                </div>
+
+                <div class="motivation-card">
+                    <h3><i class="fas fa-quote-left"></i> Daily Motivation</h3>
+                    <p class="quote" id="dailyQuote">"The secret of getting ahead is getting started."</p>
+                    <p class="quote-author" id="quoteAuthor">– Mark Twain</p>
+                    <button class="btn-refresh-quote" id="refreshQuote">
+                        <i class="fas fa-sync-alt"></i> New Quote
+                    </button>
+                </div>
+
+                <div class="achievements-preview">
+                    <h3><i class="fas fa-trophy"></i> Recent Achievements</h3>
+                    <div class="achievements-list" id="achievementsList">
+                        <!-- Achievements will be added here by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Center Panel: Habits Grid -->
+            <section class="center-panel">
+                <div class="habits-header">
+                    <h2><i class="fas fa-tasks"></i> Your Habits</h2>
+                    <div class="view-controls">
+                        <button class="view-btn active" data-view="grid"><i class="fas fa-th"></i></button>
+                        <button class="view-btn" data-view="list"><i class="fas fa-list"></i></button>
+                    </div>
+                </div>
+                
+                <div class="habits-container" id="habitsContainer">
+                    <!-- Habits will be dynamically added here -->
+                    <div class="empty-state" id="emptyState">
+                        <i class="fas fa-seedling"></i>
+                        <h3>No Habits Yet</h3>
+                        <p>Create your first habit to start forging your future!</p>
+                        <button class="btn-start" id="startFirstHabit">Create Your First Habit</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Calendar & Stats -->
+            <section class="right-panel">
+                <div class="calendar-widget">
+                    <h3><i class="fas fa-calendar-alt"></i> Habit Calendar</h3>
+                    <div class="calendar-header">
+                        <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                        <h4 id="currentMonth">March 2024</h4>
+                        <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Calendar will be generated by JS -->
+                    </div>
+                </div>
+
+                <div class="progress-widget">
+                    <h3><i class="fas fa-chart-line"></i> Weekly Progress</h3>
+                    <div class="progress-bars" id="progressBars">
+                        <!-- Progress bars will be added by JS -->
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                    <button class="btn-quick" id="markAllToday">
+                        <i class="fas fa-check-double"></i> Mark All for Today
+                    </button>
+                    <button class="btn-quick" id="exportData">
+                        <i class="fas fa-download"></i> Export Progress
+                    </button>
+                    <button class="btn-quick" id="importData">
+                        <i class="fas fa-upload"></i> Import Data
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- New Habit Modal -->
+        <div class="modal-overlay" id="habitModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2><i class="fas fa-magic"></i> Forge New Habit</h2>
+                    <button class="close-modal" id="closeModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="habitForm">
+                        <div class="form-group">
+                            <label for="habitName"><i class="fas fa-heading"></i> Habit Name</label>
+                            <input type="text" id="habitName" placeholder="e.g., Drink 8 glasses of water" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="habitCategory"><i class="fas fa-tag"></i> Category</label>
+                            <select id="habitCategory">
+                                <option value="health">Health & Fitness</option>
+                                <option value="learning">Learning</option>
+                                <option value="productivity">Productivity</option>
+                                <option value="mindfulness">Mindfulness</option>
+                                <option value="creativity">Creativity</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-palette"></i> Color Theme</label>
+                            <div class="color-options">
+                                <div class="color-option" data-color="#4CAF50" style="background-color: #4CAF50;"></div>
+                                <div class="color-option" data-color="#2196F3" style="background-color: #2196F3;"></div>
+                                <div class="color-option" data-color="#FF9800" style="background-color: #FF9800;"></div>
+                                <div class="color-option" data-color="#9C27B0" style="background-color: #9C27B0;"></div>
+                                <div class="color-option" data-color="#F44336" style="background-color: #F44336;"></div>
+                            </div>
+                            <input type="hidden" id="selectedColor" value="#4CAF50">
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-day"></i> Frequency</label>
+                            <div class="frequency-options">
+                                <label class="frequency-option">
+                                    <input type="radio" name="frequency" value="daily" checked>
+                                    <span>Daily</span>
+                                </label>
+                                <label class="frequency-option">
+                                    <input type="radio" name="frequency" value="weekdays">
+                                    <span>Weekdays</span>
+                                </label>
+                                <label class="frequency-option">
+                                    <input type="radio" name="frequency" value="weekly">
+                                    <span>Weekly</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="habitGoal"><i class="fas fa-bullseye"></i> Goal (Optional)</label>
+                            <input type="text" id="habitGoal" placeholder="e.g., 30 days streak">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="habitIcon"><i class="fas fa-icons"></i> Icon</label>
+                            <div class="icon-options">
+                                <i class="fas fa-glass-water icon-option" data-icon="fa-glass-water"></i>
+                                <i class="fas fa-dumbbell icon-option" data-icon="fa-dumbbell"></i>
+                                <i class="fas fa-book icon-option" data-icon="fa-book"></i>
+                                <i class="fas fa-meditation icon-option" data-icon="fa-meditation"></i>
+                                <i class="fas fa-code icon-option" data-icon="fa-code"></i>
+                                <i class="fas fa-moon icon-option" data-icon="fa-moon"></i>
+                                <i class="fas fa-apple-alt icon-option" data-icon="fa-apple-alt"></i>
+                                <i class="fas fa-running icon-option" data-icon="fa-running"></i>
+                            </div>
+                            <input type="hidden" id="selectedIcon" value="fa-glass-water">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" id="cancelModal">Cancel</button>
+                    <button class="btn-create" id="createHabit">
+                        <i class="fas fa-hammer"></i> Forge Habit
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Toast -->
+        <div class="toast" id="toast">
+            <div class="toast-content">
+                <i class="fas fa-check-circle"></i>
+                <span class="toast-message">Habit completed successfully!</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>HabitForge &copy; 2024 | Forge Your Future, One Habit at a Time</p>
+            <div class="footer-links">
+                <button class="footer-link" id="resetData">Reset Data</button>
+                <button class="footer-link" id="viewSource">View Source</button>
+                <button class="footer-link" id="darkModeToggle">
+                    <i class="fas fa-moon"></i> Dark Mode
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
